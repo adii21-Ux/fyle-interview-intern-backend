@@ -97,4 +97,15 @@ class Assignment(db.Model):
     @classmethod
     def get_graded_or_submitted_assignments(cls):
         return cls.filter((cls.state == AssignmentStateEnum.GRADED) | (cls.state == AssignmentStateEnum.SUBMITTED)).all()
+    
+    @classmethod
+    def grade_assignment(cls, id, grade):
+        assignment = Assignment.get_by_id(id)
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+        assertions.assert_found(grade, 'grade cannot be empty')
+        
+        assignment.grade = grade
+        db.session.flush()
+            
+        return assignment
 
